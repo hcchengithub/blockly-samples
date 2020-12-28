@@ -42,9 +42,24 @@
     </div>
 
     <div class="blockly-editor">
-      <div id="blocklyDiv" style="height: 480px; width: 400px;"></div>
+      <div id="blocklyDiv" style="height: 600px; width: 1000px;"></div>
+
+      <!-- 會用到的 blocks 放進 toolbox,定義在這裡. main.js 會使用到 -->
+      <xml id="toolbox" style="display: none">
+        <block type="activity_mouse_click"></block>
+        <block type="click"></block>
+        <block type="window_specification"></block>
+        <block type="parent_window"></block>
+        <block type="descendant_window"></block>
+        <block type="class_name"></block>
+        <block type="control_type"></block>
+        <block type="automation_id"></block>
+        <block type="xy_axis_index_filter"></block>
+      </xml>
     </div>
 
+  <script src="https://unpkg.com/blockly"></script>
+  <script src="scripts/activity_blocks.js"></script>
   <script src="scripts/music_maker.js"></script>
   <script src="scripts/main.js"></script>
 

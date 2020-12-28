@@ -1,9 +1,9 @@
 main {
-  width: 400px;
+  width: 1000px;
   position: relative;
   margin: 0 auto;
   overflow:hidden;
-  height: 600px;
+  height: 700px;
 }
 
 header {
@@ -35,10 +35,10 @@ h1 {
 .blockly-editor {
   position: absolute;
   top: 64px;
-  left: -400px;
+  left: -1000px;
   transition: left .4s;
-  height: 460px;
-  width: 400px;
+  height: 600px;
+  width: 1000px;
   background-color: #eee;
 }
 
@@ -50,8 +50,8 @@ h1 {
   display: flex;
   flex-flow: column;
   justify-content: space-between;
-  height: 460px;
-  width: 400px;
+  height: 600px;
+  width: 1000px;
 }
 
 .maker > div {
