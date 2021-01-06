@@ -1,0 +1,570 @@
+From 7b2838524146cd3dc482187ca2f86674f29ea5e1 Mon Sep 17 00:00:00 2001
+From: Tony HS Li <tony_hs_li@wistron.com>
+Date: Mon, 28 Dec 2020 13:15:43 +0800
+Subject: [PATCH] activity demo
+
+---
+ .../starter-code/index.html                   |  17 +-
+ .../starter-code/scripts/activity_blocks.js   | 367 ++++++++++++++++++
+ .../starter-code/scripts/main.js              |  77 +++-
+ .../starter-code/styles/index.css             |  14 +-
+ 4 files changed, 465 insertions(+), 10 deletions(-)
+ create mode 100644 examples/getting-started-codelab/starter-code/scripts/activity_blocks.js
+
+diff --git a/examples/getting-started-codelab/starter-code/index.html b/examples/getting-started-codelab/starter-code/index.html
+index 7ea386d..00768f4 100644
+--- a/examples/getting-started-codelab/starter-code/index.html
++++ b/examples/getting-started-codelab/starter-code/index.html
+@@ -42,9 +42,24 @@
+     </div>
+ 
+     <div class="blockly-editor">
+-      <div id="blocklyDiv" style="height: 480px; width: 400px;"></div>
++      <div id="blocklyDiv" style="height: 600px; width: 1000px;"></div>
++
++      <!-- 會用到的 blocks 放進 toolbox,定義在這裡. main.js 會使用到 -->
++      <xml id="toolbox" style="display: none">
++        <block type="activity_mouse_click"></block>
++        <block type="click"></block>
++        <block type="window_specification"></block>
++        <block type="parent_window"></block>
++        <block type="descendant_window"></block>
++        <block type="class_name"></block>
++        <block type="control_type"></block>
++        <block type="automation_id"></block>
++        <block type="xy_axis_index_filter"></block>
++      </xml>
+     </div>
+ 
++  <script src="https://unpkg.com/blockly"></script>
++  <script src="scripts/activity_blocks.js"></script>
+   <script src="scripts/music_maker.js"></script>
+   <script src="scripts/main.js"></script>
+ 
+diff --git a/examples/getting-started-codelab/starter-code/scripts/activity_blocks.js b/examples/getting-started-codelab/starter-code/scripts/activity_blocks.js
+new file mode 100644
+index 0000000..4ace8fa
+--- /dev/null
++++ b/examples/getting-started-codelab/starter-code/scripts/activity_blocks.js
+@@ -0,0 +1,367 @@
++/**
++ * 在這個網頁建立新的 block
++ * https://blockly-demo.appspot.com/static/demos/blockfactory/index.html
++ * Block Definition (JSON) 複製貼上到這個 array 裡面
++ * Generator stub (JavaScript) 複製貼上到這個檔案底部
++ */
++
++Blockly.defineBlocksWithJsonArray([
++  {
++    "type": "activity_mouse_click",
++    "message0": "<ActivityMouseClick /> %1 description %2 label %3 defer %4 timeout %5 %6 maxRetryCount %7 retryInterval %8 %9 terminateIfFail %10 cleanup %11 executionMode %12 %13 %14",
++    "args0": [
++      {
++        "type": "input_dummy"
++      },
++      {
++        "type": "field_input",
++        "name": "description",
++        "text": ""
++      },
++      {
++        "type": "field_input",
++        "name": "label",
++        "text": ""
++      },
++      {
++        "type": "field_number",
++        "name": "defer",
++        "value": 0,
++        "min": 0,
++        "precision": 0.1
++      },
++      {
++        "type": "field_number",
++        "name": "timeout",
++        "value": 180,
++        "min": -1,
++        "precision": 0.1
++      },
++      {
++        "type": "input_dummy"
++      },
++      {
++        "type": "field_number",
++        "name": "maxRetryCount",
++        "value": 0,
++        "min": 0,
++        "precision": 1
++      },
++      {
++        "type": "field_number",
++        "name": "retryInterval",
++        "value": 0,
++        "min": 0,
++        "precision": 0.1
++      },
++      {
++        "type": "input_dummy"
++      },
++      {
++        "type": "field_checkbox",
++        "name": "terminateIfFail",
++        "checked": false
++      },
++      {
++        "type": "field_checkbox",
++        "name": "cleanup",
++        "checked": false
++      },
++      {
++        "type": "field_dropdown",
++        "name": "executionMode",
++        "options": [
++          [
++            "Synchronous",
++            "Sync"
++          ],
++          [
++            "Asynchronous",
++            "Async"
++          ]
++        ]
++      },
++      {
++        "type": "input_dummy"
++      },
++      {
++        "type": "input_statement",
++        "name": "children",
++        "check": [
++          "click",
++          "window_specification",
++          "xy_axis_index_filter"
++        ]
++      }
++    ],
++    "previousStatement": null,
++    "nextStatement": null,
++    "colour": 230,
++    "tooltip": "",
++    "helpUrl": ""
++  },
++  {
++    "type": "click",
++    "message0": "<Click /> %1 clickCount %2 clickInterval %3",
++    "args0": [
++      {
++        "type": "input_dummy"
++      },
++      {
++        "type": "field_number",
++        "name": "clickCount",
++        "value": 0,
++        "min": 0,
++        "precision": 1
++      },
++      {
++        "type": "field_number",
++        "name": "clickInterval",
++        "value": 1,
++        "min": 0,
++        "precision": 1
++      }
++    ],
++    "previousStatement": null,
++    "nextStatement": null,
++    "colour": 120,
++    "tooltip": "",
++    "helpUrl": ""
++  },
++  {
++    "type": "window_specification",
++    "message0": "<WindowSpecification /> %1 %2",
++    "args0": [
++      {
++        "type": "input_dummy"
++      },
++      {
++        "type": "input_statement",
++        "name": "children",
++        "check": [
++          "parent_window",
++          "descendant_window"
++        ]
++      }
++    ],
++    "previousStatement": null,
++    "nextStatement": null,
++    "colour": 120,
++    "tooltip": "",
++    "helpUrl": ""
++  },
++  {
++    "type": "parent_window",
++    "message0": "<ParentWindow /> %1 class name %2 control type %3",
++    "args0": [
++      {
++        "type": "input_dummy"
++      },
++      {
++        "type": "input_statement",
++        "name": "className",
++        "check": "class_name"
++      },
++      {
++        "type": "input_statement",
++        "name": "controlType",
++        "check": "control_type"
++      }
++    ],
++    "previousStatement": null,
++    "nextStatement": null,
++    "colour": 20,
++    "tooltip": "",
++    "helpUrl": ""
++  },
++  {
++    "type": "descendant_window",
++    "message0": "<DescendantWindow /> %1 automation id %2 control type %3",
++    "args0": [
++      {
++        "type": "input_dummy"
++      },
++      {
++        "type": "input_statement",
++        "name": "automationId",
++        "check": "automation_id"
++      },
++      {
++        "type": "input_statement",
++        "name": "controlType",
++        "check": "control_type"
++      }
++    ],
++    "previousStatement": null,
++    "nextStatement": null,
++    "colour": 20,
++    "tooltip": "",
++    "helpUrl": ""
++  },
++  {
++    "type": "class_name",
++    "message0": "<ClassName> %1 </ClassName>",
++    "args0": [
++      {
++        "type": "field_input",
++        "name": "value",
++        "text": ""
++      }
++    ],
++    "previousStatement": null,
++    "nextStatement": null,
++    "colour": 65,
++    "tooltip": "",
++    "helpUrl": ""
++  },
++  {
++    "type": "control_type",
++    "message0": "<ControlType> %1 </ControlType>",
++    "args0": [
++      {
++        "type": "field_input",
++        "name": "value",
++        "text": ""
++      }
++    ],
++    "previousStatement": null,
++    "nextStatement": null,
++    "colour": 65,
++    "tooltip": "",
++    "helpUrl": ""
++  },
++  {
++    "type": "automation_id",
++    "message0": "<<AutomationId>> %1",
++    "args0": [
++      {
++        "type": "field_number",
++        "name": "value",
++        "value": 0,
++        "min": 0,
++        "precision": 1
++      }
++    ],
++    "previousStatement": null,
++    "nextStatement": null,
++    "colour": 65,
++    "tooltip": "",
++    "helpUrl": ""
++  },
++  {
++    "type": "xy_axis_index_filter",
++    "message0": "<XYAxisIndexFilter /> %1 xIndex %2 yIndex %3",
++    "args0": [
++      {
++        "type": "input_dummy"
++      },
++      {
++        "type": "field_number",
++        "name": "xIndex",
++        "value": 0,
++        "precision": 1
++      },
++      {
++        "type": "field_number",
++        "name": "yIndex",
++        "value": 0,
++        "precision": 1
++      }
++    ],
++    "previousStatement": null,
++    "nextStatement": null,
++    "colour": 120,
++    "tooltip": "",
++    "helpUrl": ""
++  }
++]);
++
++Blockly.JavaScript['activity_mouse_click'] = function(block) {
++  var text_description = block.getFieldValue('description');
++  var text_label = block.getFieldValue('label');
++  var number_defer = block.getFieldValue('defer');
++  var number_timeout = block.getFieldValue('timeout');
++  var number_maxretrycount = block.getFieldValue('maxRetryCount');
++  var number_retryinterval = block.getFieldValue('retryInterval');
++  var checkbox_terminateiffail = block.getFieldValue('terminateIfFail') == 'TRUE';
++  var checkbox_cleanup = block.getFieldValue('cleanup') == 'TRUE';
++  var dropdown_executionmode = block.getFieldValue('executionMode');
++  var statements_children = Blockly.JavaScript.statementToCode(block, 'children');
++  return '<Activity handler="AutoFlow.InputDevice.ActivityMouseClick"'
++    + (text_description ? ` description="${text_description}"` : '')
++    + (text_label ? ` label="${text_label}"` : '')
++    + (number_defer !== 0 ? ` defer="${number_defer}"` : '')
++    + (number_timeout !== 180 ? ` timeout="${number_timeout}"` : '')
++    + (number_maxretrycount !== 0 ? ` maxRetryCount="${number_maxretrycount}"` : '')
++    + (number_retryinterval !== 0 ? ` retryInterval="${number_retryinterval}"` : '')
++    + (checkbox_terminateiffail ? ` terminateIfFail="${checkbox_terminateiffail}"` : '')
++    + (checkbox_cleanup ? ` cleanup="${checkbox_cleanup}"` : '')
++    + (dropdown_executionmode !== 'Sync' ? ` executionMode="${dropdown_executionmode}"` : '')
++    + '>\n'
++    + statements_children
++    + '</Activity>\n';
++};
++
++Blockly.JavaScript['click'] = function(block) {
++  var number_clickcount = block.getFieldValue('clickCount');
++  var number_clickinterval = block.getFieldValue('clickInterval');
++  return '<Click'
++    + ` clickCount="${number_clickcount}"`
++    + ` clickInterval="${number_clickinterval}"`
++    + ' />\n';
++};
++
++Blockly.JavaScript['window_specification'] = function(block) {
++  var statements_children = Blockly.JavaScript.statementToCode(block, 'children');
++  return '<WindowSpecification>\n'
++    + statements_children
++    + '</WindowSpecification>\n';
++};
++
++Blockly.JavaScript['parent_window'] = function(block) {
++  var statements_classname = Blockly.JavaScript.statementToCode(block, 'className');
++  var statements_controltype = Blockly.JavaScript.statementToCode(block, 'controlType');
++  return '<ParentWindow>\n'
++    + statements_classname
++    + statements_controltype
++    + '</ParentWindow>\n';
++};
++
++Blockly.JavaScript['descendant_window'] = function(block) {
++  var statements_automationid = Blockly.JavaScript.statementToCode(block, 'automationId');
++  var statements_controltype = Blockly.JavaScript.statementToCode(block, 'controlType');
++  return '<DescendantWindow>\n'
++    + statements_automationid
++    + statements_controltype
++    + '</DescendantWindow>\n';
++};
++
++Blockly.JavaScript['class_name'] = function(block) {
++  var text_value = block.getFieldValue('value');
++  return '<ClassName>'
++    + text_value
++    + '</ClassName>\n';
++};
++
++Blockly.JavaScript['control_type'] = function(block) {
++  var text_value = block.getFieldValue('value');
++  return '<ControlType>'
++    + text_value
++    + '</ControlType>\n';
++};
++
++Blockly.JavaScript['automation_id'] = function(block) {
++  var number_value = block.getFieldValue('value');
++  return '<AutomationId>'
++    + number_value
++    + '</AutomationId>\n';
++};
++
++Blockly.JavaScript['xy_axis_index_filter'] = function(block) {
++  var number_xindex = block.getFieldValue('xIndex');
++  var number_yindex = block.getFieldValue('yIndex');
++  return '<XYAxisIndexFilter'
++    + ` xIndex="${number_xindex}"`
++    + ` yIndex="${number_yindex}"`
++    + ' />\n';
++};
+diff --git a/examples/getting-started-codelab/starter-code/scripts/main.js b/examples/getting-started-codelab/starter-code/scripts/main.js
+index 9eef2f9..8fbf696 100644
+--- a/examples/getting-started-codelab/starter-code/scripts/main.js
++++ b/examples/getting-started-codelab/starter-code/scripts/main.js
+@@ -8,11 +8,51 @@
+   let currentButton;
+ 
+   function handlePlay(event) {
+-    // Add code for playing sound.
++    loadWorkspace(event.target);
++
++    /**
++     * Workspace: 編輯區
++     * DOM: 就是一個 Object
++     * Text: XML 格式的文字
++     *
++     * workspaceToDom -> 把當前編輯區轉成 DOM, 可以暫存
++     * domToWorkspace -> 把暫存的 DOM 轉回可編輯狀態
++     * domToText 或 domToPrettyText -> 把 DOM 轉成文字, 可以存成檔案 (永久保存)
++     * textToDom -> 把文字轉成 DOM
++     *
++     * 更多資訊請參考
++     * https://developers.google.com/blockly/reference/js/Blockly.Xml
++     */
++    const dom = Blockly.Xml.workspaceToDom(Blockly.getMainWorkspace());
++
++    /**
++     * Code: EzAuto Script
++     *
++     * workspaceToCode -> 把當前編輯區轉成 Code
++     *
++     * Blockly 預設 Generator 是 JavaScript
++     * 所以這邊看到的 workspaceToCode 前綴 Blockly.JavaScript
++     * 同時我們定義在 activity_blocks.js 裡面的 generator stubs 也都前綴 Blockly.JavaScript
++     *
++     * 也就是說, 程式以為它在產生 js code
++     * 其實不是, 我們只是搭便車順著這條路, 來產生 EzAuto Script
++     *
++     * 更多資訊請參考
++     * https://developers.google.com/blockly/reference/js/Blockly.Generator
++     */
++    const code = Blockly.JavaScript.workspaceToCode(Blockly.getMainWorkspace());
++
++    alert(code);
++
++    /**
++     * console log for debugging
++     */
++    console.log("EzAuto DOM", dom);
++    console.log("EzAuto Code", code);
+   }
+ 
+   function save(button) {
+-    // Add code for saving the behavior of a button.
++    button.blocklyXml = Blockly.Xml.workspaceToDom(Blockly.getMainWorkspace());
+   }
+ 
+   function handleSave() {
+@@ -20,6 +60,14 @@
+     save(currentButton);
+   }
+ 
++  function loadWorkspace(button) {
++    let workspace = Blockly.getMainWorkspace();
++    workspace.clear();
++    if (button.blocklyXml) {
++      Blockly.Xml.domToWorkspace(button.blocklyXml, workspace);
++    }
++  }
++
+   function enableEditMode() {
+     document.body.setAttribute('mode', 'edit');
+     document.querySelectorAll('.button').forEach(btn => {
+@@ -39,6 +87,7 @@
+   function enableBlocklyMode(e) {
+     document.body.setAttribute('mode', 'blockly');
+     currentButton = e.target;
++    loadWorkspace(currentButton);
+   }
+ 
+   document.querySelector('#edit').addEventListener('click', enableEditMode);
+@@ -47,4 +96,28 @@
+ 
+   enableMakerMode();
+ 
++  // class NominalConnectionChecker extends Blockly.ConnectionChecker {
++  //   /**
++  //    * @override
++  //    */
++  //   doTypeChecks(a, b) {
++  //     console.log("EzAuto doTypeChecks", a, b);
++  //     return false;
++  //   }
++  // }
++
++  // Blockly.registry.register(
++  //   Blockly.registry.Type.CONNECTION_CHECKER,
++  //   'NominalConnectionChecker',
++  //   NominalConnectionChecker
++  // );
++
++  Blockly.inject('blocklyDiv', {
++    toolbox: document.getElementById('toolbox'),
++    scrollbars: true
++    // scrollbars: false,
++    // plugins: {
++    //   [Blockly.registry.Type.CONNECTION_CHECKER]: 'NominalConnectionChecker'
++    // }
++  });
+ })();
+diff --git a/examples/getting-started-codelab/starter-code/styles/index.css b/examples/getting-started-codelab/starter-code/styles/index.css
+index 0ef8f3b..f8609db 100644
+--- a/examples/getting-started-codelab/starter-code/styles/index.css
++++ b/examples/getting-started-codelab/starter-code/styles/index.css
+@@ -1,9 +1,9 @@
+ main {
+-  width: 400px;
++  width: 1000px;
+   position: relative;
+   margin: 0 auto;
+   overflow:hidden;
+-  height: 600px;
++  height: 700px;
+ }
+ 
+ header {
+@@ -35,10 +35,10 @@ h1 {
+ .blockly-editor {
+   position: absolute;
+   top: 64px;
+-  left: -400px;
++  left: -1000px;
+   transition: left .4s;
+-  height: 460px;
+-  width: 400px;
++  height: 600px;
++  width: 1000px;
+   background-color: #eee;
+ }
+ 
+@@ -50,8 +50,8 @@ h1 {
+   display: flex;
+   flex-flow: column;
+   justify-content: space-between;
+-  height: 460px;
+-  width: 400px;
++  height: 600px;
++  width: 1000px;
+ }
+ 
+ .maker > div {
+-- 
+2.23.0
+
